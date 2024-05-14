@@ -915,6 +915,7 @@ require('lazy').setup({
   { 'wakatime/vim-wakatime', lazy = false },
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
+  require 'kickstart.plugins.autopairs',
   { import = 'custom.plugins' },
 }, {
   ui = {
