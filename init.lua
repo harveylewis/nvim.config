@@ -187,6 +187,7 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<C-w><C-l>', '<C-w><C-v>', { desc = 'Split window vertically' })
 -- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 -- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 --
@@ -580,7 +581,6 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {},
-        eslint = {},
         --
 
         lua_ls = {
@@ -664,6 +664,9 @@ require('lazy').setup({
         black = {
           prepend_args = { '--line-length=160' },
         },
+        prettier = {
+          prepend_args = { '--tab-width=4' },
+        },
       },
       formatters_by_ft = {
         lua = { 'stylua' },
@@ -672,7 +675,7 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { 'prettier' },
       },
     },
   },
