@@ -654,7 +654,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true, python = true }
+        local disable_filetypes = { c = true, cpp = true, python = true, html = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return false
         end
@@ -681,6 +681,7 @@ require('lazy').setup({
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         javascript = { 'prettier' },
+        javascriptreact = { 'prettier' },
       },
     },
   },
@@ -705,12 +706,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load { paths = { '~/.config/nvim/snippets' } }
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',

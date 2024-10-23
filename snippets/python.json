@@ -1,0 +1,32 @@
+{
+   "sls-boilerplate":{
+      "prefix":"sls-function",
+      "body":[
+         "def ${1:function_name}(read_conn, write_conn, request):",
+         "    read_cursor = None",
+         "    write_cursor = None",
+         "",
+         "    try:",
+         "        read_cursor = read_conn.cursor()",
+         "        write_cursor = write_conn.cursor()",
+         "        user_permissions = get_user_permissions(read_cursor, request)",
+         "        if user_permissions is None:",
+         "            return simple_response(400, \"You are not logged in.\")",
+         "",
+         "        sql = \"\"\"",
+         "              \"\"\"",
+         "",
+         "        read_cursor.execute(sql)",
+         "",
+         "    finally:",
+         "        if write_cursor:",
+         "            write_cursor.close()",
+         "        if read_cursor:",
+         "            read_cursor.close()",
+         "",
+         "    return simple_response(200, \"Success\")",
+         ""
+      ],
+      "description":"sls-boilerplate"
+   }
+}

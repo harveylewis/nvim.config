@@ -481,7 +481,7 @@ local function config(_, opts)
       -- c.vim_status,
       c.file_name,
       c.git_branch,
-      c.lsp,
+      -- c.lsp,
     },
     { -- right
       c.vi_mode,
