@@ -89,6 +89,7 @@ P.S. You can delete this when you're done too. It's your config now! :)
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+vim.g.python3_host_prog = '/Users/harveylewis/.config/nvim/venv/bin/python3'
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
@@ -585,7 +586,13 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {},
+        -- tsserver = {},
+        ts_ls = {},
+        eslint = {
+          settings = {
+            run = 'onSave',
+          },
+        },
         --
 
         lua_ls = {
@@ -965,22 +972,31 @@ require('lazy').setup({
   },
 })
 
-require('lspconfig').pyright.setup {
+require('lspconfig').basedpyright.setup {
   capabilities = capabilities,
   handlers = {
-    ['textDocument/publishDiagnostics'] = function() end,
-  },
-}
-require('lspconfig').ruff_lsp.setup {
-  init_options = {
-    settings = {
-      -- Any extra CLI arguments for `ruff` go here.
-      args = {},
-    },
+    -- ['textDocument/publishDiagnostics'] = function() end,
   },
 }
 
-require('lspconfig').tsserver.setup {
+-- require('lspconfig').pyright.setup {
+--   capabilities = capabilities,
+--   handlers = {
+--     -- ['textDocument/publishDiagnostics'] = function() end,
+--   },
+-- }
+-- require('lspconfig').ruff.setup {
+--   init_options = {
+--     settings = {
+--       -- Any extra CLI arguments for `ruff` go here.
+--       args = {
+--         preview = true,
+--       },
+--     },
+--   },
+-- }
+
+require('lspconfig').ts_ls.setup {
   init_options = {
     preferences = {
       disableSuggestions = true,
@@ -990,3 +1006,11 @@ require('lspconfig').tsserver.setup {
 }
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+--
+vim.diagnostic.config {
+  virtual_text = true, -- shows inline messages
+  signs = true, -- shows signs in the gutter
+  underline = true, -- underlines problematic code
+  update_in_insert = false, -- don't show errors while typing
+  severity_sort = true, -- sort diagnostics by severity
+}
