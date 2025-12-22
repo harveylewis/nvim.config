@@ -460,6 +460,22 @@ require('lazy').setup({
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+          if client and client.name == 'pyright' then
+            local group = vim.api.nvim_create_augroup('pyright-insert-leave', { clear = false })
+            vim.api.nvim_create_autocmd('InsertLeave', {
+              group = group,
+              buffer = event.buf,
+              callback = function()
+                -- Manually trigger diagnostic refresh by restarting it for the buffer
+                vim.diagnostic.disable(event.buf)
+                vim.defer_fn(function()
+                  vim.diagnostic.enable(event.buf)
+                end, 100)
+              end,
+            })
+          end
+
           if client and client.server_capabilities.documentHighlightProvider then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
@@ -496,6 +512,7 @@ require('lazy').setup({
         -- ts_ls = {},
         -- eslint = { settings = { run = 'onSave' } },
         pyright = {},
+        -- ty = {},
         -- lua_ls = {
         --   settings = {
         --     Lua = {
@@ -696,7 +713,11 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    opts = {},
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
