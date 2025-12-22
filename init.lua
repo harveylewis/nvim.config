@@ -509,28 +509,39 @@ require('lazy').setup({
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       local servers = {
-        -- ts_ls = {},
-        -- eslint = { settings = { run = 'onSave' } },
-        pyright = {},
-        -- ty = {},
-        -- lua_ls = {
-        --   settings = {
-        --     Lua = {
-        --       completion = { callSnippet = 'Replace' },
-        --     },
-        --   },
-        -- },
+        -- pyright = {},
+        ty = {},
+        ts_ls = {
+          init_options = {
+            preferences = {
+              disableSuggestions = true,
+              inlayHints = false,
+            },
+          },
+        },
+        eslint = {
+          init_options = {
+            settings = { run = 'onSave' },
+          },
+        },
       }
 
-      require('mason').setup()
       local ensure_installed = vim.tbl_keys(servers)
+      -- Remove ts_ls from ensure_installed
+      ensure_installed = vim.tbl_filter(function(server)
+        return server ~= 'ts_ls' and server ~= 'eslint'
+      end, ensure_installed)
+
+      require('mason').setup()
+      -- local ensure_installed = vim.tbl_keys(servers)
       vim.list_extend(ensure_installed, { 'stylua' })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       for server_name, config in pairs(servers) do
         config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
-        require('lspconfig')[server_name].setup(config)
+        vim.lsp.config(server_name, config)
       end
+      vim.lsp.enable(vim.tbl_keys(servers))
     end,
   },
 
@@ -899,20 +910,20 @@ require('lazy').setup({
 --   },
 -- }
 
-require('lspconfig').ts_ls.setup {
-  init_options = {
-    preferences = {
-      disableSuggestions = true,
-      inlayHints = false,
-    },
-  },
-}
-
-require('lspconfig').eslint.setup {
-  init_options = {
-    settings = { run = 'onSave' },
-  },
-}
+-- require('lspconfig').ts_ls.setup {
+--   init_options = {
+--     preferences = {
+--       disableSuggestions = true,
+--       inlayHints = false,
+--     },
+--   },
+-- }
+--
+-- require('lspconfig').eslint.setup {
+--   init_options = {
+--     settings = { run = 'onSave' },
+--   },
+-- }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
