@@ -509,8 +509,8 @@ require('lazy').setup({
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       local servers = {
-        -- pyright = {},
-        ty = {},
+        pyright = {},
+        -- ty = {},
         ts_ls = {
           init_options = {
             preferences = {
@@ -523,7 +523,33 @@ require('lazy').setup({
           init_options = {
             settings = { run = 'onSave' },
           },
+          settings = {
+            run = 'onSave',
+          },
+          on_new_config = function(config, root_dir)
+            local dominated_config_files = {
+              'eslint.config.js',
+              'eslint.config.mjs',
+              'eslint.config.cjs',
+              'eslint.config.ts',
+              'eslint.config.mts',
+              'eslint.config.cts',
+            }
+            local use_flat = false
+            for _, file in ipairs(dominated_config_files) do
+              if vim.fn.filereadable(root_dir .. '/' .. file) == 1 then
+                use_flat = true
+                break
+              end
+            end
+            config.settings = vim.tbl_deep_extend('force', config.settings or {}, {
+              experimental = {
+                useFlatConfig = use_flat,
+              },
+            })
+          end,
         },
+        gopls = {},
       }
 
       local ensure_installed = vim.tbl_keys(servers)
@@ -643,6 +669,28 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
+        formatting = {
+          format = function(entry, vim_item)
+            local max_width = 100 -- Adjust this number to your preference
+
+            -- Truncate the label (abbr)
+            if vim_item.abbr and #vim_item.abbr > max_width then
+              vim_item.abbr = string.sub(vim_item.abbr, 1, max_width - 1) .. '…'
+            end
+
+            -- Truncate the menu text (source name / extra info)
+            if vim_item.menu and #vim_item.menu > max_width then
+              vim_item.menu = string.sub(vim_item.menu, 1, max_width - 1) .. '…'
+            end
+
+            -- Truncate the kind info (type info)
+            if vim_item.kind and #vim_item.kind > 20 then
+              vim_item.kind = string.sub(vim_item.kind, 1, 19) .. '…'
+            end
+
+            return vim_item
+          end,
+        },
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
         --
